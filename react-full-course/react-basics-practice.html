@@ -1,0 +1,60 @@
+<!-- Add some starter code -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+    <div class="js-container"></div>
+
+
+    <script src="./react-basics.js"></script>
+    <script src="https://unpkg.com/supersimpledev@3.2.1/external-library.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+    <script src="https://unpkg.com/supersimpledev/dayjs.js"></script>
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+
+    <script type="text/babel">
+      const button = <button>Good Job!</button>
+      const name = 'abdullah';
+      const para = <p>My name is {name}</p>
+      const div = (
+        <div>
+        <p>Cotton Socks</p>
+        <p>Price: $10</p>
+        <button>Add To Cart</button>
+        </div>
+      )
+      const socksPrice = 10;
+      const tShirtPrice = 8;
+      const productCost = 10*(8*2);
+      const shippingCost = 5;
+      const totalCost = productCost + shippingCost;
+
+      console.log(productCost);
+
+      const costPara = <p>Product cost: ${productCost}</p>
+      const costDiv = (
+        <div>
+          <p>Product Cost : ${productCost}</p>  
+          <p>Shipping Cost : ${shippingCost}</p>  
+          <p>Total Cost : ${totalCost}</p> 
+          <button>Place your order</button> 
+        </div>
+      );
+
+      const datePara = <p>Today is {dayjs().format('MMMM D')}</p>
+      const timePara = <p>Current time: ${dayjs().format('HH:mm:ss')}</p>
+
+        console.log(dayjs().format('MMMM D'));
+
+      const container = document.querySelector('.js-container');
+
+      ReactDOM.createRoot(container).render(timePara);
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!-- Add some starter code -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+    <div class="js-container"></div>
+
+
+    <script src="./react-basics.js"></script>
+    <script src="https://unpkg.com/supersimpledev@3.2.1/external-library.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+
+
+    <!-- Babel is an external library which is a JS compiler : it compiles other languages to JS
+     
+    Why do we need it? because React does not use plain and simple JS, it simply uses an enhanced version of JS know as "jsx" which stands for JavaScript XML, which is JS with extended features to write HTML directly in JS code. 
+    -->
+
+
+    <!-- Loading babel -->
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+
+
+
+<!-- Specifying that the type of the script is text/babel to tell babel to translate it -->
+    <script type="text/babel">
+// Babel translates the jsx to JS for the web browser.
+      const button = <button>hello</button>;
+      const div = (
+        <div>
+          <p>Hello World</p>
+          <button>Hello</button> 
+        </div>
+      )
+
+// We are fetching the container div using the DOM.
+
+      const container = document.querySelector('.js-container');
+
+// ReactDOM.createRoot() --> This basically sets up react
+// Then we give it an html element, then we can start using the features of React like .render --> which can take HTML elements and plain text as well.
+
+      ReactDOM.createRoot(container).render(div);
+
+// React allows us to use HTML elements directly in JS
+// It highlights the errors in HTML syntax properly because it is not just a string being interpolated.
+
+    </script>
+  </body>
+</html>
