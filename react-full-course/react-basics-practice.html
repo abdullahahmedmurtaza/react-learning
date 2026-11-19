@@ -47,14 +47,15 @@
       );
 
       const datePara = <p>Today is {dayjs().format('MMMM D')}</p>
-      const timePara = <p>Current time: ${dayjs().format('HH:mm:ss')}</p>
 
         console.log(dayjs().format('MMMM D'));
 
       const container = document.querySelector('.js-container');
-
-      ReactDOM.createRoot(container).render(timePara);
-
+      const root = ReactDOM.createRoot(container);
+      setInterval(()=>{
+        const timePara = <p>Current time: {dayjs().format('HH:mm:ss')}</p>
+        root.render(timePara);
+      },1000);
     </script>
   </body>
 </html>
