@@ -19,11 +19,34 @@
       // Component is a piece of the website.
       // It is just a function that returns HTML.
 
-      function ChatInput() {
+      function ChatInput({chatMessages, setChatMessages}) {
+
+        const [textboxValue, setTextboxValue] = React.useState('');
+        function saveInputText(event){
+        // when onChange runs a function, it gives the function a value called event, that's why we have access to it in the params.
+
+
+        // console.log(event.target.value);
+
+        setTextboxValue(event.target.value);
+      }
+
+      function sendMessage(){
+          setChatMessages([...chatMessages,{
+            message: textboxValue,
+            sender: 'user',
+            id: crypto.randomUUID(),
+          }],
+        );
+        setTextboxValue('');
+        }
+
+
+        // onChange is an event that runs a function when we change something in the input textbox
         return (
           <>
-            <input placeholder="Send message to chatbot" size="30" />
-            <button>Send</button>
+            <input placeholder="Send message to chatbot" size="30" onChange={saveInputText} value={textboxValue} />
+            <button onClick={sendMessage}>Send</button>
           </>
         );
       }
@@ -51,8 +74,64 @@
 
       // Instead of repeating the ChatMessage component, we can simply just save it in an array, and create a component for it
 
-      function ChatMessages() {
-        const chatMessages = [
+      function ChatMessages({chatMessages}) {
+
+        // Testing
+        // console.log(chatMessages);
+
+
+
+        // chatMessage is just a variable and we have to convert it into state. 
+        // useState gives us two values 
+        // 1. the current data.
+        // 2. the method for updating the data (Updater function) 
+
+        //use array destructuring to get to the results of these things. 
+
+
+        // The state chatMessages has been lifted in App --> see App component.
+
+
+        return (
+          // props can take any type of value, remember to not run the function and only pass it's reference there, beause otherwise the function will return undefined and it will be saved in the the onClick.
+          <>
+
+
+            {chatMessages.map((chatMessage) => {
+              return (
+                <ChatMessage
+                  message={chatMessage.message}
+                  sender={chatMessage.sender}
+                  key={chatMessage.id}
+                />
+              );
+            })}
+          </>
+        );
+        // When returning an array of components give each one a unique key prop, this helps React track changes in the code.
+      }
+
+      // const button = <button>hello</button>;
+
+      // If we don't want to use the divs we can also use fragments to group these elements together.
+
+      // We can either call the function or
+      // We can also use the "Our own HTML element syntax" which is much more preferred.
+
+      // We can also add attributes to our own created HTML elements, by giving them a name and a value.
+
+      // Then, we can also access these attributes and use them in our components. This is called props.
+
+      // Every component by default has a parameter called props which is an object that contains ALL THE ATTRIBUTES WE PASS.
+
+      // props --> short for properties because the attributes are saved as properties in this object.
+
+      // Props are very useful as they make our code very reusable.
+
+      // Instead of saving the app in a variable, the best practice is to use an app component.
+
+      function App() {
+        const [chatMessages, setChatMessages] = React.useState([
           {
             message: "Hello Chatbot",
             sender: "user",
@@ -73,61 +152,17 @@
             sender: "chatbot",
             id: "4",
           },
-        ];
-
-        function sendMessage() {
-          console.log("send message");
-          chatMessages.push({
-            message: "test",
-            sender: "user",
-            id: crypto.randomUUID,
-          });
-          console.log(chatMessages);
-        }
+        ]);
 
         return (
-          // props can take any type of value, remember to not run the function and only pass it's reference there, beause otherwise the function will return undefined and it will be saved in the the onClick.
           <>
-            <button onClick={sendMessage}>Send Message</button>
-
-            {chatMessages.map((chatMessage) => {
-              return (
-                <ChatMessage
-                  message={chatMessage.message}
-                  sender={chatMessage.sender}
-                  key={chatMessage.id}
-                />
-              );
-            })}
-          </>
-        );
-        // When returning an array of components give each one a unique key prop, this helps React track changes in the code.
-      }
-
-      const button = <button>hello</button>;
-
-      // If we don't want to use the divs we can also use fragments to group these elements together.
-
-      // We can either call the function or
-      // We can also use the "Our own HTML element syntax" which is much more preferred.
-
-      // We can also add attributes to our own created HTML elements, by giving them a name and a value.
-
-      // Then, we can also access these attributes and use them in our components. This is called props.
-
-      // Every component by default has a parameter called props which is an object that contains ALL THE ATTRIBUTES WE PASS.
-
-      // props --> short for properties because the attributes are saved as properties in this object.
-
-      // Props are very useful as they make our code very reusable.
-
-      // Instead of saving the app in a variable, the best practice is to use an app component.
-
-      function App() {
-        return (
-          <>
-            <ChatInput />
-            <ChatMessages />
+            <ChatInput 
+              chatMessages={chatMessages}
+              setChatMessages={setChatMessages}
+            />
+            <ChatMessages 
+              chatMessages={chatMessages}
+            />
           </>
         );
       }

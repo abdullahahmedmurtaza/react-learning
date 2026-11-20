@@ -1,0 +1,28 @@
+State in React is just data that is connected to HTML
+Data Updates --> HTML updates
+
+To convert some data into state, we have the useState hook.
+
+useState gives us two values 
+ 1. the current data.
+ 2. the method for updating the data (Updater function) 
+
+use array destructuring to get to the results of these things. 
+
+Often, the upadter function is used in the handler of an event.
+In React, never use the DOM manually and use React features to update the DOM.
+Also, never modify the data in the updater function directly, instead, create a copy and then modify that copy.
+
+The philosophy in React is to use "state" whenever we save data that changes over time.
+
+in useState, we can also set the initial value like useState(''); --> here '' is the initial value
+useState is often used INSIDE the components.
+
+
+If we want to access something (commonly an updater function for a state) in a component but it is defined in another component, we use something called "lifting the state up".
+
+we "lift" the state up to the parent component so that it can share the state between the two required components.
+
+sharing is done using "props"
+
+keep the naming convention when sharing the state + updater. Use the same name for consistency.
