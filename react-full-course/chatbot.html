@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
 
     <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script src="https://unpkg.com/supersimpledev/chatbot.js"></script>
     <script type="text/babel">
       // Component is a piece of the website.
       // It is just a function that returns HTML.
@@ -32,12 +33,29 @@
       }
 
       function sendMessage(){
-          setChatMessages([...chatMessages,{
+
+        const newChatMessages =[
+          ...chatMessages,
+        {
             message: textboxValue,
             sender: 'user',
             id: crypto.randomUUID(),
+          }
+        ];
+        setChatMessages(newChatMessages);
+
+        const response = Chatbot.getResponse(textboxValue);
+
+          setChatMessages([...newChatMessages,{
+            message: response,
+            sender: 'chatbot',
+            id: crypto.randomUUID(),
           }],
-        );
+        )
+
+        // console.log(response);
+
+
         setTextboxValue('');
         }
 

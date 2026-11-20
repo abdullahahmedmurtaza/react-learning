@@ -26,3 +26,6 @@ we "lift" the state up to the parent component so that it can share the state be
 sharing is done using "props"
 
 keep the naming convention when sharing the state + updater. Use the same name for consistency.
+
+
+React does not immediately update the state, it updates only when all of the code is done running. If we want to update the state in the middle somewhere, we must do so manually, by saving it in a variable and then using that updated variable in the updater function.
