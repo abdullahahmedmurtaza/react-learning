@@ -20,50 +20,57 @@
       // Component is a piece of the website.
       // It is just a function that returns HTML.
 
-      function ChatInput({chatMessages, setChatMessages}) {
-
-        const [textboxValue, setTextboxValue] = React.useState('');
-        function saveInputText(event){
-        // when onChange runs a function, it gives the function a value called event, that's why we have access to it in the params.
-
-
-        // console.log(event.target.value);
-
-        setTextboxValue(event.target.value);
-      }
-
-      function sendMessage(){
-
-        const newChatMessages =[
-          ...chatMessages,
-        {
-            message: textboxValue,
-            sender: 'user',
-            id: crypto.randomUUID(),
-          }
-        ];
-        setChatMessages(newChatMessages);
-
-        const response = Chatbot.getResponse(textboxValue);
-
-          setChatMessages([...newChatMessages,{
-            message: response,
-            sender: 'chatbot',
-            id: crypto.randomUUID(),
-          }],
-        )
-
-        // console.log(response);
-
-
-        setTextboxValue('');
+      function ChatInput({ chatMessages, setChatMessages }) {
+        const [textboxValue, setTextboxValue] = React.useState("");
+        const [isloading, setIsLoading] = React.useState(false);
+        function saveInputText(event) {
+          // when onChange runs a function, it gives the function a value called event, that's why we have access to it in the params.
+          // console.log(event.target.value);
+          setTextboxValue(event.target.value);
         }
-
+        function handleKeys(event) {
+          event.key === "Enter" && sendMessage();
+          event.key === "Escape" && setTextboxValue("");
+        }
+        const userMessage = {
+          message: textboxValue,
+          sender: "user",
+          id: crypto.randomUUID(),
+        };
+        const loadingMessage = {
+          message: "Loading......",
+          sender: "chatbot",
+          id: crypto.randomUUID(),
+        };
+        async function sendMessage() {
+          setTextboxValue("");
+          setIsLoading(true);
+          const newChatMessages = [
+            ...chatMessages,
+            userMessage,
+          ];
+          setChatMessages([...newChatMessages]);
+          setChatMessages([...newChatMessages,loadingMessage]);
+          const response = await Chatbot.getResponseAsync(textboxValue);
+          const responseMessage = {
+            message: response,
+            sender: "chatbot",
+            id: crypto.randomUUID(),
+          };
+          setChatMessages([...newChatMessages, responseMessage]);
+          // console.log(response);
+        }
 
         // onChange is an event that runs a function when we change something in the input textbox
         return (
           <>
-            <input placeholder="Send message to chatbot" size="30" onChange={saveInputText} value={textboxValue} />
+            <input
+              placeholder="Send message to chatbot"
+              size="30"
+              onChange={saveInputText}
+              value={textboxValue}
+              onKeyDown={handleKeys}
+            />
             <button onClick={sendMessage}>Send</button>
           </>
         );
@@ -92,29 +99,22 @@
 
       // Instead of repeating the ChatMessage component, we can simply just save it in an array, and create a component for it
 
-      function ChatMessages({chatMessages}) {
-
+      function ChatMessages({ chatMessages }) {
         // Testing
         // console.log(chatMessages);
 
-
-
-        // chatMessage is just a variable and we have to convert it into state. 
-        // useState gives us two values 
+        // chatMessage is just a variable and we have to convert it into state.
+        // useState gives us two values
         // 1. the current data.
-        // 2. the method for updating the data (Updater function) 
+        // 2. the method for updating the data (Updater function)
 
-        //use array destructuring to get to the results of these things. 
-
+        //use array destructuring to get to the results of these things.
 
         // The state chatMessages has been lifted in App --> see App component.
-
 
         return (
           // props can take any type of value, remember to not run the function and only pass it's reference there, beause otherwise the function will return undefined and it will be saved in the the onClick.
           <>
-
-
             {chatMessages.map((chatMessage) => {
               return (
                 <ChatMessage
@@ -174,13 +174,11 @@
 
         return (
           <>
-            <ChatInput 
+            <ChatInput
               chatMessages={chatMessages}
               setChatMessages={setChatMessages}
             />
-            <ChatMessages 
-              chatMessages={chatMessages}
-            />
+            <ChatMessages chatMessages={chatMessages} />
           </>
         );
       }
