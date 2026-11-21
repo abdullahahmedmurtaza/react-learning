@@ -22,7 +22,7 @@
 
       function ChatInput({ chatMessages, setChatMessages }) {
         const [textboxValue, setTextboxValue] = React.useState("");
-        const [isloading, setIsLoading] = React.useState(false);
+        const [isLoading, setIsLoading] = React.useState(false);
         function saveInputText(event) {
           // when onChange runs a function, it gives the function a value called event, that's why we have access to it in the params.
           // console.log(event.target.value);
@@ -43,6 +43,9 @@
           id: crypto.randomUUID(),
         };
         async function sendMessage() {
+          if(isLoading || textboxValue === ''){
+            return;
+          }
           setTextboxValue("");
           setIsLoading(true);
           const newChatMessages = [
@@ -59,6 +62,7 @@
           };
           setChatMessages([...newChatMessages, responseMessage]);
           // console.log(response);
+          setIsLoading(false);
         }
 
         // onChange is an event that runs a function when we change something in the input textbox
@@ -74,6 +78,7 @@
             <button onClick={sendMessage}>Send</button>
           </>
         );
+        
       }
 
       function ChatMessage({ message, sender }) {
