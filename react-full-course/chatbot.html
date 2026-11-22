@@ -3,7 +3,73 @@
 <!doctype html>
 <html>
   <head>
-    <title>React Basics</title>
+    <title>Simple Chatbot</title>
+    <style>
+      .send-button {
+        background-color : rgb(25, 135, 84);
+        color: white;
+        padding : 12px 20px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      .chat-input {
+        padding : 12px 15px;
+        border-radius : 10px;
+        border-width : 1px;
+        font-size : 15px;
+        flex-grow : 1;
+      }
+
+      .input-container {
+        display: flex;
+        margin-bottom: 60px;
+      }
+
+      .app-container {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-message-user {
+        display: flex;
+        justify-content: end;
+        align-items: start;
+      }
+      .chat-message-chatbot {
+        display: flex;
+        align-items: start;
+      }
+      .chat-message-text {
+        background-color: rgb(238, 238, 238);
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-right: 10px;
+        margin-left: 10px;
+        margin-bottom: 28px;
+        max-width: 300px;
+      }
+      body{
+        font-family: Arial, Helvetica, sans-serif;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+      .chat-message-profile {
+        width: 45px;
+      }
+      .chat-messges-container {
+        flex-grow: 1;
+        margin-top: 20px;
+        overflow: scroll;
+        scrollbar-width: none;
+      }
+    </style>
   </head>
   <body>
     <div class="js-container"></div>
@@ -67,16 +133,17 @@
 
         // onChange is an event that runs a function when we change something in the input textbox
         return (
-          <>
+          <div className="input-container">
             <input
               placeholder="Send message to chatbot"
               size="30"
               onChange={saveInputText}
               value={textboxValue}
               onKeyDown={handleKeys}
+              className = "chat-input"
             />
-            <button onClick={sendMessage}>Send</button>
-          </>
+            <button className="send-button" onClick={sendMessage}>Send</button>
+          </div>
         );
         
       }
@@ -94,10 +161,10 @@
         // Adding a simple if is not allowed so we use the guard operator that works like an if block.
 
         return (
-          <div>
-            {sender === "chatbot" && <img src="./robot.png" width="50" />}
-            {message}
-            {sender === "user" && <img src="./user.png" width="50" />}
+          <div className={sender === 'user' ? 'chat-message-user' : 'chat-message-chatbot'}>
+            {sender === "chatbot" && <img src="./robot.png" className="chat-message-profile" />}
+            <div className="chat-message-text">{message}</div>
+            {sender === "user" && <img src="./user.png" className="chat-message-profile"  />}
           </div>
         );
       }
@@ -105,6 +172,38 @@
       // Instead of repeating the ChatMessage component, we can simply just save it in an array, and create a component for it
 
       function ChatMessages({ chatMessages }) {
+
+// Hooks in react are a way to use react features in our component, they should never be used inside anything and only used at the top of the component
+
+// useEffect is a hook that can be used to run some code when a component is created or updated.
+
+// Use effect takes two arguments, a callback and an array (called the dependency array), which when left empty, only updates the component at the time of its creation. It controls when useEffect runs.
+
+// Inside the dependency array, we can put some data like 'chatMessages'
+
+// useRef is another hook that lets us create a div with special features this is known as a ref.
+// First we need to grab the element (the div) which we need to scroll.
+
+
+
+const chatMessagesRef = React.useRef(null);
+
+React.useEffect(()=>{
+  // console.log('updated');
+
+  // print and check what is currently stored in the ref.
+  console.log(chatMessagesRef.current);
+
+  // const containerElem = chatMessagesRef.current;
+  if(containerElem){
+// scrollTop means 'how far the element has already scrolled vertically'
+// scrollHeight means 'total height of all the contents inside the scrollable elements'
+    containerElem.scrollTop = containerElem.scrollHeight;
+  }
+},[chatMessages]);
+
+
+
         // Testing
         // console.log(chatMessages);
 
@@ -119,7 +218,7 @@
 
         return (
           // props can take any type of value, remember to not run the function and only pass it's reference there, beause otherwise the function will return undefined and it will be saved in the the onClick.
-          <>
+          <div className="chat-messges-container" ref={chatMessagesRef}>
             {chatMessages.map((chatMessage) => {
               return (
                 <ChatMessage
@@ -129,7 +228,7 @@
                 />
               );
             })}
-          </>
+          </div>
         );
         // When returning an array of components give each one a unique key prop, this helps React track changes in the code.
       }
@@ -178,13 +277,13 @@
         ]);
 
         return (
-          <>
+          <div className="app-container">
+            <ChatMessages chatMessages={chatMessages} />
             <ChatInput
               chatMessages={chatMessages}
               setChatMessages={setChatMessages}
             />
-            <ChatMessages chatMessages={chatMessages} />
-          </>
+          </div>
         );
       }
 
