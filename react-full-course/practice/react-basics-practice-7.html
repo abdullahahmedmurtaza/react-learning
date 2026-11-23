@@ -1,0 +1,48 @@
+<!-- Add some starter code -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Practice 4</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <div class="js-container"></div>
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script type="text/babel">
+        
+        function Login(){
+            const [passwordShow, setPasswordShow] = React.useState(false);
+            function handleShow(){
+                !passwordShow? setPasswordShow(true) : setPasswordShow(false);
+                // console.log(passwordShow)
+            }
+            return (
+                
+                <>
+                    <h1 className="header-text">Hello, welcome to my website</h1>
+                    <input type="text" placeholder="Email" className="input-field"/>
+                    <input type={passwordShow? "text" : "password"} placeholder="Password" className="input-field"/>
+                    <button onClick={handleShow}>{passwordShow? 'Hide' : 'Show'}</button>
+                    <button className="button">Login</button>
+                    <button className="button">Sign Up</button>
+                </>
+            );
+        }
+        function App(){
+            return (
+                <>
+                    <Login />
+                </>
+            );
+            
+        }
+        const container = document.querySelector('.js-container');
+        ReactDOM.createRoot(container).render(<App />);
+    </script>
+  </body>
+</html>

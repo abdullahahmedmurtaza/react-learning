@@ -1,0 +1,52 @@
+
+
+
+In this code snippet, as long as I have the empty dependency array, everything works fine but as soon as I remove the array, the run code starts running in the terminal in multiples of n*2, (very large very fast) 
+
+
+
+
+
+That snowballing effect happens because **removing the dependency array makes the effect run after *every* render**, and each run starts a **brand-new `setInterval**` without stopping the previous ones.
+
+### Why It Explodes So Fast
+
+1. **Initial render:** `useEffect` runs and creates **Interval #1** (ticks every `1000ms`).
+2. **After 1 second:** Interval #1 calls `setTime(...)` → `Clock` re-renders.
+3. **After that re-render:** Because there is **no dependency array**, `useEffect` runs **again** and creates **Interval #2** (without clearing Interval #1). Now **2** intervals are running.
+4. **Next second:** Both intervals trigger `setTime(...)` → `Clock` re-renders twice/more → `useEffect` runs again and creates even more intervals (`Interval #3`, `#4`, ...).
+5. **Why it feels like a snowball (`n * 2` / exponential growth):** Each interval triggers renders, each render spawns more uncleaned intervals, and each active interval fires its own `console.log('run code')` every second—so the number of active timers multiplies rapidly and floods your console.
+
+---
+
+### How to Fix It Properly (Cleanup Function)
+
+Even with `[]`, it's best practice to return a cleanup function with `clearInterval(intervalId)` so timers are always cleaned up properly when the component unmounts (or if dependencies ever change):
+
+```jsx
+function Clock() {
+  const [time, setTime] = React.useState(dayjs().format('HH:mm:ss'));
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime(dayjs().format('HH:mm:ss'));
+      console.log('run code');
+    }, 1000);
+
+    // Cleanup prevents duplicate intervals from piling up
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  return <p>{time}</p>;
+}
+
+```
+
+### Quick Rule of Thumb for `setInterval` in `useEffect`
+
+* Keep `[]` so you only set up the recurring timer **once** on mount.
+* Always save the ID returned by `setInterval(...)` and call `clearInterval(intervalId)` inside the returned cleanup function.
+
+Are you working on the clock exercise where another button toggles `Clock` mounting/unmounting, or testing how `useEffect` behaves with different dependency arrays?

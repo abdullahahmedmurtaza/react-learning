@@ -1,0 +1,96 @@
+Line-by-Line Breakdown
+function Button(){
+
+Declares the Button component function. Every time state updates, React re-runs this entire function from top to bottom.
+
+const [isButtonOn, setIsButtonOn] = React.useState(true);
+
+Initializes state isButtonOn to true on the first render. On subsequent re-renders, React gives isButtonOn the latest committed state value.
+
+let buttonText = 'ON';
+
+Bug / Redundant local variable: On every single render, buttonText is reset back to 'ON'. Even if handleClick mutated buttonText during a click, the very next re-render triggered by setIsButtonOn(...) wipes that mutation out and sets buttonText right back to 'ON'. Instead of mutating a local variable, buttonText should be derived directly from isButtonOn during render.
+
+function handleClick(){
+
+Event handler function that runs when the button is clicked.
+
+// isButtonOn? setIsButtonOn(false) : setIsButtonOn(true);
+
+Commented-out toggle logic. (Note: setIsButtonOn(!isButtonOn)—or setIsButtonOn(prev => !prev)—does the same toggle more cleanly.)
+
+// !isButtonOn && (buttonText = 'OFF')
+
+Commented-out attempt to mutate buttonText. Because isButtonOn is a stale snapshot from the current render, !isButtonOn checks the old value before the re-render happens.
+
+if(isButtonOn){
+
+Checks the current render's value of isButtonOn (true on the first click).
+
+setIsButtonOn(false);
+
+Schedules a state update so isButtonOn becomes false on the next render. It does not immediately change isButtonOn inside this running handleClick call.
+
+buttonText = 'OFF';
+
+Mutates the local buttonText variable inside this render's scope—which gets thrown away and reset to 'ON' as soon as React re-renders.
+
+}else{
+
+Runs when isButtonOn was false during the current render.
+
+setIsButtonOn(true);
+
+Schedules isButtonOn to become true on the next render.
+
+buttonText = 'ON';
+
+Mutates buttonText locally again, which is unnecessary and gets overwritten on re-render.
+
+}
+
+Closes handleClick.
+
+return (
+
+Begins returning JSX for the current render.
+
+<>
+
+React Fragment wrapper. Since there is only a single <button> inside, you don't even need the fragment here.
+
+<button type="button" className="button" onClick={handleClick}>{buttonText}</button>
+
+Bug: {buttonText} renders the local let buttonText variable instead of deriving the label from isButtonOn ({isButtonOn ? 'ON' : 'OFF'}). Because let buttonText = 'ON' runs at the top of every render, the button text will always revert to 'ON' on re-render instead of staying 'OFF' when isButtonOn is false.
+
+</>
+
+Closes the fragment.
+
+return (...); / }
+
+Closes the return statement and Button component.
+
+Clean Fix
+JavaScript
+function Button() {
+  const [isButtonOn, setIsButtonOn] = React.useState(true);
+
+  function handleClick() {
+    setIsButtonOn(!isButtonOn);
+  }
+
+  return (
+    <button
+      type="button"
+      className="button"
+      onClick={handleClick}
+    >
+      {isButtonOn ? 'ON' : 'OFF'}
+    </button>
+  );
+}
+Core Takeaway
+In React, UI labels should be derived from state during render (isButtonOn ? 'ON' : 'OFF'), not stored in a separate let variable and manually mutated inside an event handler.
+
+Are you trying to change the button's background color or styles based on isButtonOn next as well?
