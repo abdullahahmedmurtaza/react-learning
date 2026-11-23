@@ -26,6 +26,7 @@
       .input-container {
         display: flex;
         margin-bottom: 60px;
+        /* flex-direction: column; */
       }
 
       .app-container {
@@ -69,6 +70,14 @@
         overflow: scroll;
         scrollbar-width: none;
       }
+      .initial-message{
+        opacity: 0.5;
+        text-align: center;
+      }
+      .loading-gif {
+        height: 40px;
+        margin: -15px;
+      }
     </style>
   </head>
   <body>
@@ -104,7 +113,8 @@
           id: crypto.randomUUID(),
         };
         const loadingMessage = {
-          message: "Loading......",
+          // message: "Loading......",
+          message : <img src="./loading-spinner.gif" className="loading-gif"/>,
           sender: "chatbot",
           id: crypto.randomUUID(),
         };
@@ -169,11 +179,16 @@
         );
       }
 
-      // Instead of repeating the ChatMessage component, we can simply just save it in an array, and create a component for it
 
-      function ChatMessages({ chatMessages }) {
 
-// Hooks in react are a way to use react features in our component, they should never be used inside anything and only used at the top of the component
+      
+// We can also create our own personal hooks --> For this we will create useAutoScroll hook
+// ALWAYS DEFINE HOOKS OUTSIDE OF COMPONENTS
+
+
+function useAutoScroll(dependencies){
+
+  // Hooks in react are a way to use react features in our component, they should never be used inside anything and only used at the top of the component
 
 // useEffect is a hook that can be used to run some code when a component is created or updated.
 
@@ -185,14 +200,13 @@
 // First we need to grab the element (the div) which we need to scroll.
 
 
-
-const chatMessagesRef = React.useRef(null);
+  const chatMessagesRef = React.useRef(null);
 
 React.useEffect(()=>{
   // console.log('updated');
 
   // print and check what is currently stored in the ref.
-  console.log(chatMessagesRef.current);
+  // console.log(chatMessagesRef.current);
   const containerElem = chatMessagesRef.current;
   // const containerElem = chatMessagesRef.current;
   if(containerElem){
@@ -200,8 +214,20 @@ React.useEffect(()=>{
 // scrollHeight means 'total height of all the contents inside the scrollable elements'
     containerElem.scrollTop = containerElem.scrollHeight;
   }
-},[chatMessages]);
+},dependencies);
 
+       
+      }
+
+
+
+
+
+      // Instead of repeating the ChatMessage component, we can simply just save it in an array, and create a component for it
+
+      function ChatMessages({ chatMessages }) {
+        // using custom hook
+        const chatMessagesRef = useAutoScroll([chatMessages]);
 
 
         // Testing
@@ -216,9 +242,12 @@ React.useEffect(()=>{
 
         // The state chatMessages has been lifted in App --> see App component.
 
-        return (
+         return (
           // props can take any type of value, remember to not run the function and only pass it's reference there, beause otherwise the function will return undefined and it will be saved in the the onClick.
           <div className="chat-messges-container" ref={chatMessagesRef}>
+            <div className="initial-message">
+              {chatMessages.length === 0? 'Welcome to the chatbot project! Send a messsage using the textbox below': ''}
+            </div>
             {chatMessages.map((chatMessage) => {
               return (
                 <ChatMessage
@@ -231,7 +260,7 @@ React.useEffect(()=>{
           </div>
         );
         // When returning an array of components give each one a unique key prop, this helps React track changes in the code.
-      }
+}
 
       // const button = <button>hello</button>;
 
@@ -253,28 +282,7 @@ React.useEffect(()=>{
       // Instead of saving the app in a variable, the best practice is to use an app component.
 
       function App() {
-        const [chatMessages, setChatMessages] = React.useState([
-          {
-            message: "Hello Chatbot",
-            sender: "user",
-            id: "1",
-          },
-          {
-            message: "Hello! how can I help you?",
-            sender: "chatbot",
-            id: "2",
-          },
-          {
-            message: "Can you get me today's date?",
-            sender: "user",
-            id: "3",
-          },
-          {
-            message: "Today is september 27",
-            sender: "chatbot",
-            id: "4",
-          },
-        ]);
+        const [chatMessages, setChatMessages] = React.useState([]);
 
         return (
           <div className="app-container">
